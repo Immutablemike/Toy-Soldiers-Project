@@ -86,7 +86,10 @@ Visit `http://localhost:5173` and navigate to `/auth` to see the KYC verificatio
 
 ## 🌐 Live Demo
 
-**Production URL:** https://toy-soldiers-project-6vkmo0jzz-immutablemikes-projects.vercel.app
+**Vercel Project:** https://vercel.com/immutablemikes-projects/toy-soldiers-project
+**Repository Branch:** twilio-demo-clean
+
+⚠️ **Note for Reviewers:** The live demo is deployed on Vercel. Contact project owner if password protection is enabled.
 
 ### 6. Build for Production
 

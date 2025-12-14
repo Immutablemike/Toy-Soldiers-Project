@@ -42,7 +42,10 @@ Visit `http://localhost:5173/auth` to see the demo.
 
 ## 🌐 Live Demo
 
-**Production URL:** https://toy-soldiers-project-6vkmo0jzz-immutablemikes-projects.vercel.app
+**Vercel Project:** https://vercel.com/immutablemikes-projects/toy-soldiers-project
+**Latest Deployment:** Check Vercel dashboard for current production URL
+
+⚠️ **Note for Reviewers:** If you encounter a 401 password protection, please contact the project owner for access credentials or request the deployment be made public.
 
 ### 4. Test Phone Verification
 
