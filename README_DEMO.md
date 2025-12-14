@@ -2,7 +2,7 @@
 
 **Public Demonstration** | Twilio Verify API Integration with SvelteKit & Supabase
 
-This branch (`twilio-kyc-demo`) contains a **sanitized, publicly shareable demo** of Twilio Verify API integration for KYC verification. 
+This branch (`twilio-demo-clean`) contains a **sanitized, publicly shareable demo** of Twilio Verify API integration for KYC verification with NO git history of credentials. 
 
 ⚠️ **This demo uses test credentials** - For production implementation details, see the main branch.
 

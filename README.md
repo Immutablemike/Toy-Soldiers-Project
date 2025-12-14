@@ -8,7 +8,7 @@
 
 This repository contains the **production implementation** of Twilio Verify API integrated with Supabase authentication. This is a legitimate business application using Twilio for KYC (Know Your Customer) compliance through phone number verification.
 
-**⚠️ Note:** This repository contains production credentials and implementation details. A sanitized public demo is available at: [`twilio-kyc-demo` branch](https://github.com/Immutablemike/Toy-Soldiers-Project/tree/twilio-kyc-demo)
+**⚠️ Note:** This repository contains production credentials and implementation details. A sanitized public demo is available at: [`twilio-demo-clean` branch](https://github.com/Immutablemike/Toy-Soldiers-Project/tree/twilio-demo-clean)
 
 ---
 
