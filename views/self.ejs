@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phone Verification - Toy Soldiers</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0a0a0a; color: #fff; min-height: 100vh; padding: 20px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    header { margin-bottom: 40px; padding: 20px; background: #1a1a1a; border-radius: 12px; }
+    h1 { font-size: 1.8rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .card { background: #1a1a1a; padding: 30px; border-radius: 12px; margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; color: #ddd; font-size: 0.9rem; }
+    input { width: 100%; padding: 12px; background: #2a2a2a; border: 1px solid #333; border-radius: 8px; color: white; font-size: 1rem; }
+    input:focus { outline: none; border-color: #667eea; }
+    .btn { padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1rem; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: #333; }
+    .message { padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem; }
+    .success { background: #22c55e; }
+    .error { background: #ef4444; }
+    .step { display: none; }
+    .step.active { display: block; }
+    a { color: #667eea; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📱 Phone Verification</h1>
+      <p style="color: #888; margin-top: 10px;">Verify your phone number using Twilio SMS</p>
+    </header>
+    
+    <div id="message"></div>
+    
+    <div class="card">
+      <div id="step1" class="step active">
+        <div class="form-group">
+          <label for="phoneNumber">Phone Number</label>
+          <input type="tel" id="phoneNumber" placeholder="+1234567890" required>
+          <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">Include country code (e.g., +1 for US)</p>
+        </div>
+        <button onclick="sendVerification()" class="btn" id="sendBtn">Send Verification Code</button>
+      </div>
+      
+      <div id="step2" class="step">
+        <div class="form-group">
+          <label for="code">Verification Code</label>
+          <input type="text" id="code" placeholder="000000" maxlength="6" required>
+          <p style="color: #888; font-size: 0.85rem; margin-top: 5px;">Enter the 6-digit code sent to your phone</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="checkVerification()" class="btn" id="checkBtn">Verify Code</button>
+          <button onclick="resetForm()" class="btn btn-secondary">Back</button>
+        </div>
+      </div>
+      
+      <div id="step3" class="step">
+        <div class="success" style="padding: 20px; text-align: center;">
+          <h2 style="margin-bottom: 10px;">✓ Verified!</h2>
+          <p>Your phone number has been successfully verified.</p>
+        </div>
+        <div style="margin-top: 20px; text-align: center;">
+          <a href="/app" class="btn">Back to Dashboard</a>
+        </div>
+      </div>
+    </div>
+    
+    <p style="text-align: center; color: #888; font-size: 0.9rem;">
+      <a href="/app">← Back to dashboard</a>
+    </p>
+  </div>
+  
+  <script>
+    let phoneNumber = '';
+    
+    function showMessage(text, type) {
+      const msgDiv = document.getElementById('message');
+      msgDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => msgDiv.innerHTML = '', 5000);
+    }
+    
+    function showStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+    }
+    
+    async function sendVerification() {
+      phoneNumber = document.getElementById('phoneNumber').value;
+      
+      if (!phoneNumber.startsWith('+')) {
+        showMessage('Phone number must include country code (e.g., +1234567890)', 'error');
+        return;
+      }
+      
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+      
+      try {
+        const response = await fetch('/api/verify/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showMessage('Verification code sent!', 'success');
+          showStep(2);
+        } else {
+          showMessage(data.error || 'Failed to send code', 'error');
+        }
+      } catch (error) {
+        showMessage('Error: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Send Verification Code';
+      }
+    }
+    
+    async function checkVerification() {
+      const code = document.getElementById('code').value;
+      
+      if (code.length !== 6) {
+        showMessage('Please enter a 6-digit code', 'error');
+        return;
+      }
+      
+      const btn = document.getElementById('checkBtn');
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+      
+      try {
+        const response = await fetch('/api/verify/check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phoneNumber, code })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.verified) {
+          showStep(3);
+        } else {
+          showMessage(data.error || 'Invalid code', 'error');
+        }
+      } catch (error) {
+        showMessage('Error: ' + error.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Verify Code';
+      }
+    }
+    
+    function resetForm() {
+      document.getElementById('code').value = '';
+      showStep(1);
+    }
+  </script>
+</body>
+</html>
